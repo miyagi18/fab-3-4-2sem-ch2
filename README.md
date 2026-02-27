@@ -8,7 +8,6 @@
 - `backend/` — Express API (CRUD /api/products)
 - `frontend/` — React (Vite) клиент
 - `docs/student-handout.md` — методичка для студентов
-- `docs/teacher-notes.md` — заметки для преподавателя
 
 ## Быстрый старт
 ### 1) Backend
