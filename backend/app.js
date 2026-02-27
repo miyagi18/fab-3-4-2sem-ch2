@@ -28,6 +28,26 @@ app.use(express.json());
 // 3) Наш логгер (для наглядности)
 app.use(logger);
 
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'API управления товарами (Circassian Store)',
+      version: '1.0.0',
+      description: 'API для интернет-магазина адыгской атрибутики',
+    },
+    servers: [{ url: `http://localhost:${PORT}`, description: 'Локальный сервер' }],
+  },
+  apis: ['./routes/*.js'], 
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+
 // Healthcheck / главная
 app.get("/", (req, res) => {
   res.send("Express API is running. Try /api/products");

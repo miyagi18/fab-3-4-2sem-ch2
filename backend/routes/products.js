@@ -6,6 +6,53 @@ const router = express.Router();
 let products = require("../data/products");
 
 /**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       required:
+ *         - title
+ *         - price
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: Уникальный идентификатор товара (генерируется автоматически)
+ *         title:
+ *           type: string
+ *           description: Название товара
+ *         category:
+ *           type: string
+ *           description: Категория товара
+ *         description:
+ *           type: string
+ *           description: Подробное описание
+ *         price:
+ *           type: number
+ *           description: Цена в рублях (положительное число)
+ *         stock:
+ *           type: integer
+ *           description: Количество на складе
+ *         rating:
+ *           type: number
+ *           description: Рейтинг товара (0-5)
+ *         image:
+ *           type: string
+ *           description: URL изображения
+ *       example:
+ *         id: "abc12345"
+ *         title: "Адыгейский нож"
+ *         category: "Оружие"
+ *         description: "Традиционный черкесский нож ручной работы"
+ *         price: 3500
+ *         stock: 10
+ *         rating: 4.8
+ *         image: "https://example.com/knife.jpg"
+ */
+
+
+
+/**
  * Вспомогательная функция: найти товар по id (id строковый)
  */
 function findById(id) {
@@ -48,12 +95,53 @@ router.post("/", (req, res) => {
   products.push(newProduct);
   res.status(201).json(newProduct);
 });
+
 // GET /api/products — список товаров
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     summary: Возвращает список всех товаров
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: Список товаров
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ */
+
 router.get("/", (req, res) => {
   res.json(products);
 });
 
 // GET /api/products/:id — один товар
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   get:
+ *     summary: Получает товар по ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID товара
+ *     responses:
+ *       200:
+ *         description: Данные товара
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Товар не найден
+ */
 router.get("/:id", (req, res) => {
   const product = findById(req.params.id);
   if (!product) return res.status(404).json({ error: "Product not found" });
@@ -61,6 +149,54 @@ router.get("/:id", (req, res) => {
 });
 
 // POST /api/products — добавить товар
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Создаёт новый товар
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - price
+ *             properties:
+ *               title:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               stock:
+ *                 type: integer
+ *               rating:
+ *                 type: number
+ *               image:
+ *                 type: string
+ *             example:
+ *               title: "Папаха"
+ *               category: "Головные уборы"
+ *               description: "Черкесская папаха из каракуля"
+ *               price: 4500
+ *               stock: 5
+ *               rating: 4.9
+ *               image: "https://example.com/papaha.jpg"
+ *     responses:
+ *       201:
+ *         description: Товар успешно создан
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Ошибка валидации
+ */
 router.post("/", (req, res) => {
   const { title, category, description, price, stock, rating, image } = req.body;
 
@@ -85,6 +221,55 @@ router.post("/", (req, res) => {
 });
 
 // PATCH /api/products/:id — частичное обновление
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   patch:
+ *     summary: Частично обновляет товар
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID товара
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               stock:
+ *                 type: integer
+ *               rating:
+ *                 type: number
+ *               image:
+ *                 type: string
+ *             example:
+ *               price: 4800
+ *               stock: 8
+ *     responses:
+ *       200:
+ *         description: Обновлённый товар
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Ошибка валидации
+ *       404:
+ *         description: Товар не найден
+ */
 router.patch("/:id", (req, res) => {
   const product = findById(req.params.id);
   if (!product) return res.status(404).json({ error: "Product not found" });
@@ -104,6 +289,42 @@ router.patch("/:id", (req, res) => {
 });
 
 // DELETE /api/products/:id — удалить товар
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Удаляет товар
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID товара
+ *     responses:
+ *       200:
+ *         description: Товар успешно удалён
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                   example: true
+ *       404:
+ *         description: Товар не найден
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Product not found"
+ */
+
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
   const before = products.length;
@@ -118,3 +339,4 @@ router.delete("/:id", (req, res) => {
 });
 
 module.exports = router;
+

@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { createProduct, deleteProduct, getProducts, updateProduct } from "./api/productsApi";
 
-// Мягкая цветовая палитра в стиле черкесского флага
 const colors = {
-  green: '#3A6B4C',       // мягкий зелёный фон
-  gold: '#FDDD8C',         // мягкий золотой для акцентов
-  lightGold: '#FFF0C0',    // очень светлый золотой для hover
-  white: '#FFFFFF',        // белый текст
-  lightGreen: '#4F7A5C',   // светлый зелёный для карточек
+  green: '#3A6B4C',      
+  gold: '#FDDD8C',        
+  lightGold: '#FFF0C0',    
+  white: '#FFFFFF',        
+  lightGreen: '#4F7A5C',   
 };
 
 // Общие стили для контейнеров и элементов
